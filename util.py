@@ -1,7 +1,27 @@
 import operator
-
+import requests
+from bs4 import BeautifulSoup
 import pandas as pd
 import string
+from time import sleep
+
+
+def get_soup_from_url(url):
+    connection_made = False
+    page = None
+    while connection_made is False:
+        try:
+            page = requests.get(url)
+        except requests.exceptions.RequestException:
+            print("Connection refused.\nWaiting " + str(30) + " seconds...")
+            connection_made = False
+            sleep(30)
+        else:
+            connection_made = True
+
+    soup = BeautifulSoup(page.content.decode('utf8', 'ignore'), 'html.parser')
+
+    return soup
 
 
 def get_panda(list_data):
@@ -11,6 +31,10 @@ def get_panda(list_data):
 
 
 def remove_redundancies(word_list):
+    # If a word shows up as both uppercase and lowercase,
+    # the lowercase version is favored and the sum of both
+    # versions' frequency is used.
+    # TODO: Better account for punctuation. For example, 'U.S.' and 'us' might falsely be put together right now.
     del_list = []
     for w in word_list:
         w_lower = w.strip(string.punctuation).lower()

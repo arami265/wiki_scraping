@@ -3,11 +3,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def bar_plot(df):
+def bar_plot(df, url):
     plt.subplots(figsize=(20, 15))
     df = df.truncate(after=100)
     sns.set()
     g = sns.barplot(x='word', y='freq', data=df)
+    if url is not None:
+        g.set_title('Top 100 words in ' + url)
 
     max_freq = df['freq'].max()
 
